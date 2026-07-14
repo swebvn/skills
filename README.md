@@ -8,35 +8,81 @@ Project-owned skills are edited and regenerated in their source repositories. Ea
 
 Source repositories contain only their skill directories and skill-owned resources. Registry, synchronization, and publishing files belong only in this central repository.
 
-## Synchronize
+## Development and synchronization
 
-Check out the source repositories as siblings of this repository, then run on Windows, macOS, or Linux:
+### Requirements
+
+- PHP 8.0 or newer
+- Composer is optional and only provides the `composer sync` shortcut
+
+The sync script uses PHP built-in functions. It does not require `composer install`, a `vendor/` directory, or external packages.
+
+### Workspace layout
+
+Check out this repository and any source projects under the same parent directory:
+
+```text
+swebvn/
+├── skills/
+├── lucommerce/
+└── another-project/
+```
+
+Only projects available on the developer's machine are synchronized. Missing source repositories are skipped with a warning, and their existing published skills are left unchanged.
+
+### Run synchronization
+
+From this repository, run either command on Windows, macOS, or Linux:
 
 ```bash
 composer sync
 ```
-
-The command uses only PHP built-in functions. It does not require `composer install`, a `vendor/` directory, or external packages. You can also run it directly:
 
 ```bash
 php bin/sync.php
 ```
 
-On macOS and Linux, `./bin/sync` remains available as a shortcut.
+If the source repositories are not siblings of this repository, set `SKILLS_SOURCE_ROOT` to their common parent directory.
 
-Set `SKILLS_SOURCE_ROOT` when the source repositories live elsewhere. In Bash:
+Bash:
 
 ```bash
-SKILLS_SOURCE_ROOT=/path/to/projects ./bin/sync
+SKILLS_SOURCE_ROOT=/path/to/swebvn php bin/sync.php
 ```
 
-In Windows PowerShell:
+Windows PowerShell:
 
 ```powershell
-$env:SKILLS_SOURCE_ROOT = "C:\path\to\projects"
-composer sync
+$env:SKILLS_SOURCE_ROOT = "C:\path\to\swebvn"
+php bin\sync.php
 ```
 
-Register additional project-owned skills in `sources.json`. Each entry identifies the skill name, source repository, and path within that repository.
+The command copies each available source skill into a top-level directory in this repository. Files removed from a source skill are also removed from its published copy.
 
-Missing source repositories are skipped with a warning. Their existing published copies are left unchanged.
+### Add another skill
+
+1. Create and maintain the skill in its source project:
+
+   ```text
+   project-name/
+   └── skills/
+       └── example-skill/
+           ├── SKILL.md
+           ├── agents/
+           └── references/
+   ```
+
+2. Register it in `sources.json`:
+
+   ```json
+   {
+     "name": "example-skill",
+     "repository": "swebvn/project-name",
+     "path": "skills/example-skill"
+   }
+   ```
+
+3. Run `composer sync` and review the generated changes.
+4. Commit the source skill in its project repository, then commit the synchronized copy in this repository.
+
+Do not edit a published top-level skill directly. The next synchronization replaces it with the source project's version.
