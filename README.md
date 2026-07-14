@@ -6,6 +6,8 @@ Shared Codex skills published from SwebVN project repositories.
 
 Project-owned skills are edited and regenerated in their source repositories. Each top-level skill directory in this repository is a distribution mirror and should not be edited directly.
 
+Source repositories contain only their skill directories and skill-owned resources. Registry, synchronization, and publishing files belong only in this central repository.
+
 ## Synchronize
 
 Check out the source repositories as siblings of this repository, then run on Windows, macOS, or Linux:
