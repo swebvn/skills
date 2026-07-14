@@ -21,3 +21,5 @@ SKILLS_SOURCE_ROOT=/path/to/projects ./bin/sync
 ```
 
 Register additional project-owned skills in `sources.json`. Each entry identifies the skill name, source repository, and path within that repository.
+
+Missing source repositories are skipped with a warning. Their existing published copies under `skills/` are left unchanged.

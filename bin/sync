@@ -41,8 +41,8 @@ while IFS=$'\t' read -r name repository path; do
   target_directory="$repo_root/skills/$name"
 
   if [[ ! -f "$source_directory/SKILL.md" ]]; then
-    echo "Error: skill source not found at $source_directory" >&2
-    exit 1
+    echo "Skipping $name: source checkout not found at $source_directory" >&2
+    continue
   fi
 
   mkdir -p "$target_directory"
