@@ -3,4 +3,4 @@
 set -eu
 
 script_directory="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
-exec node "$script_directory/sync.mjs" "$@"
+exec php "$script_directory/sync.php" "$@"

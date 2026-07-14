@@ -1,0 +1,8 @@
+{
+  "name": "swebvn/skills",
+  "description": "Shared skills published from SwebVN projects",
+  "type": "project",
+  "scripts": {
+    "sync": "@php bin/sync.php"
+  }
+}
