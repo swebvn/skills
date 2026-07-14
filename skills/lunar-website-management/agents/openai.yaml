@@ -1,0 +1,4 @@
+interface:
+  display_name: "Lunar Website Management"
+  short_description: "Manage Lunar storefronts via internal APIs"
+  default_prompt: "Use $lunar-website-management to manage Lunar products, reviews, search logs, settings, locales, redirects, or combinations via internal APIs."
