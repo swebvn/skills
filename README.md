@@ -8,16 +8,25 @@ Project-owned skills are edited and regenerated in their source repositories. Th
 
 ## Synchronize
 
-Check out the source repositories as siblings of this repository, then run:
+Check out the source repositories as siblings of this repository, then run on Windows, macOS, or Linux:
 
 ```bash
-./bin/sync
+npm run sync
 ```
 
-Set `SKILLS_SOURCE_ROOT` when the source repositories live elsewhere:
+The command uses only Node.js built-in modules, so no package installation is required. On macOS and Linux, `./bin/sync` remains available as a shortcut.
+
+Set `SKILLS_SOURCE_ROOT` when the source repositories live elsewhere. In Bash:
 
 ```bash
 SKILLS_SOURCE_ROOT=/path/to/projects ./bin/sync
+```
+
+In Windows PowerShell:
+
+```powershell
+$env:SKILLS_SOURCE_ROOT = "C:\path\to\projects"
+npm run sync
 ```
 
 Register additional project-owned skills in `sources.json`. Each entry identifies the skill name, source repository, and path within that repository.

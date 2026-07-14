@@ -1,0 +1,7 @@
+{
+  "name": "@swebvn/skills",
+  "private": true,
+  "scripts": {
+    "sync": "node bin/sync.mjs"
+  }
+}

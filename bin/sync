@@ -1,56 +1,6 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
-set -euo pipefail
+set -eu
 
-repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-source_root="${SKILLS_SOURCE_ROOT:-$(dirname "$repo_root")}"
-manifest="$repo_root/sources.json"
-
-command -v jq >/dev/null 2>&1 || {
-  echo "Error: jq is required." >&2
-  exit 1
-}
-
-command -v rsync >/dev/null 2>&1 || {
-  echo "Error: rsync is required." >&2
-  exit 1
-}
-
-jq -e '
-  type == "array" and
-  all(.[];
-    (.name | type == "string" and length > 0) and
-    (.repository | type == "string" and length > 0) and
-    (.path | type == "string" and length > 0)
-  )
-' "$manifest" >/dev/null
-
-while IFS=$'\t' read -r name repository path; do
-  if [[ ! "$name" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
-    echo "Error: invalid skill name '$name'." >&2
-    exit 1
-  fi
-
-  if [[ "$path" == /* || "$path" == *".."* ]]; then
-    echo "Error: invalid source path '$path'." >&2
-    exit 1
-  fi
-
-  repository_directory="${repository##*/}"
-  source_directory="$source_root/$repository_directory/$path"
-  target_directory="$repo_root/skills/$name"
-
-  if [[ ! -f "$source_directory/SKILL.md" ]]; then
-    echo "Skipping $name: source checkout not found at $source_directory" >&2
-    continue
-  fi
-
-  mkdir -p "$target_directory"
-  rsync -a --delete \
-    --exclude '.git/' \
-    --exclude '*.zip' \
-    "$source_directory/" \
-    "$target_directory/"
-
-  echo "Synced $name from $repository:$path"
-done < <(jq -r '.[] | [.name, .repository, .path] | @tsv' "$manifest")
+script_directory="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+exec node "$script_directory/sync.mjs" "$@"
