@@ -1,6 +1,6 @@
-# SwebVN Skills
+# TDA Skills
 
-Shared Codex skills published from SwebVN project repositories.
+Shared skills.
 
 ## Source of truth
 
@@ -11,9 +11,6 @@ Source repositories contain only their skill directories and skill-owned resourc
 ## Development and synchronization
 
 ### Requirements
-
-- PHP 8.0 or newer
-- Composer is optional and only provides the `composer sync` shortcut
 
 The sync script uses PHP built-in functions. It does not require `composer install`, a `vendor/` directory, or external packages.
 
