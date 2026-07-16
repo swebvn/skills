@@ -1,0 +1,4 @@
+interface:
+  display_name: "Plane Workspace"
+  short_description: "Manage Plane projects and work items"
+  default_prompt: "Use $plane-workspace to review, create, claim, and update work in my Plane workspace."
