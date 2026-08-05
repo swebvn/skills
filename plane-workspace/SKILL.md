@@ -7,6 +7,8 @@ description: Manage projects and work items in a self-hosted Plane workspace thr
 
 Use the bundled CLI for deterministic API access. Do not reconstruct curl commands when the CLI supports the operation.
 
+Run CLI commands from this skill's root directory so all paths remain relative and portable.
+
 ## Configuration
 
 Require the API key through `PLANE_API_KEY`. Never print it, pass it as a command-line argument, place it in this skill, or commit it to a repository.
@@ -20,7 +22,7 @@ Override these with `PLANE_BASE_URL` and `PLANE_WORKSPACE_SLUG` when needed.
 
 ```bash
 export PLANE_API_KEY='...'
-python3 ~/.codex/skills/plane-workspace/scripts/plane.py me
+python3 scripts/plane.py me
 ```
 
 ## Choose a workflow
@@ -33,9 +35,9 @@ python3 ~/.codex/skills/plane-workspace/scripts/plane.py me
 4. Summarize the returned JSON in the terminology used by the user.
 
 ```bash
-python3 ~/.codex/skills/plane-workspace/scripts/plane.py projects list
-python3 ~/.codex/skills/plane-workspace/scripts/plane.py issues list --project LUNAR
-python3 ~/.codex/skills/plane-workspace/scripts/plane.py issues next --project LUNAR --label agent-ready
+python3 scripts/plane.py projects list
+python3 scripts/plane.py issues list --project LUNAR
+python3 scripts/plane.py issues next --project LUNAR --label agent-ready
 ```
 
 ### Manage work as a manager
@@ -43,11 +45,11 @@ python3 ~/.codex/skills/plane-workspace/scripts/plane.py issues next --project L
 Use `issues create`, `issues update`, and `issues comment`. Resolve human-readable names to IDs through the CLI rather than guessing IDs.
 
 ```bash
-python3 ~/.codex/skills/plane-workspace/scripts/plane.py issues create \
+python3 scripts/plane.py issues create \
   --project LUNAR --title 'Fix save-state restore' --priority high \
   --state unstarted --label bug
 
-python3 ~/.codex/skills/plane-workspace/scripts/plane.py issues update LUNAR-42 \
+python3 scripts/plane.py issues update LUNAR-42 \
   --state started --assignee bang
 ```
 
@@ -63,10 +65,10 @@ For a bulk change, first inspect the candidates and state the proposed mutations
 6. If blocked, use `issues block` with the blocker and needed next action. Do not mark incomplete work as completed.
 
 ```bash
-python3 ~/.codex/skills/plane-workspace/scripts/plane.py issues claim LUNAR-42 \
+python3 scripts/plane.py issues claim LUNAR-42 \
   --assignee bang --agent codex/rebit-worker
 
-python3 ~/.codex/skills/plane-workspace/scripts/plane.py issues complete LUNAR-42 \
+python3 scripts/plane.py issues complete LUNAR-42 \
   --summary 'Fixed SRAM restoration and added regression coverage.' \
   --tests 'php artisan test tests/Feature/SavesTest.php' \
   --commit abc1234
