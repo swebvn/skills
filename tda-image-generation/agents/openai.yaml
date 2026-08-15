@@ -1,0 +1,4 @@
+interface:
+  display_name: "TDA Image Generation"
+  short_description: "Generate and edit images through TDA proxy"
+  default_prompt: "Use $tda-image-generation to create a polished image through the configured TDA proxy."
