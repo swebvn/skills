@@ -21,7 +21,8 @@ from typing import Any
 
 
 DEFAULT_PROVIDER = "tdaproxy"
-DEFAULT_MODEL = "gpt-image-2"
+DEFAULT_MODEL = "gpt-image-2.5-sunburst"
+QUALITY_CHOICES = ["low", "medium", "high", "xhigh", "max", "auto"]
 DEFAULT_TIMEOUT_SECONDS = 180
 DEFAULT_USER_AGENT = "Codex Desktop/0.148.0-alpha.9 (Mac OS; arm64) tda-image-generation/1.0"
 MAX_IMAGES = 5
@@ -253,7 +254,7 @@ def add_common_image_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--prompt", required=True, help="Image generation/edit prompt")
     parser.add_argument("--output", required=True, type=Path, help="Output image path")
     parser.add_argument("--model", default=DEFAULT_MODEL)
-    parser.add_argument("--quality", choices=["low", "medium", "high", "auto"])
+    parser.add_argument("--quality", choices=QUALITY_CHOICES)
     parser.add_argument("--size", help="WIDTHxHEIGHT or auto")
     parser.add_argument(
         "--background", choices=["auto", "opaque", "transparent"]
@@ -312,6 +313,24 @@ def build_payload(args: argparse.Namespace) -> tuple[str, dict[str, Any]]:
     return "images/generations", payload
 
 
+def parameter_warnings(args: argparse.Namespace, response: dict[str, Any]) -> list[str]:
+    """Flag proxy-normalized request parameters instead of reporting them as honored."""
+    warnings: list[str] = []
+    if args.size and args.size != "auto":
+        actual_size = response.get("size")
+        if isinstance(actual_size, str) and actual_size and actual_size != args.size:
+            warnings.append(
+                f"requested size {args.size} but endpoint returned {actual_size}"
+            )
+    if args.quality and args.quality != "auto":
+        actual_quality = response.get("quality")
+        if isinstance(actual_quality, str) and actual_quality and actual_quality != args.quality:
+            warnings.append(
+                f"requested quality {args.quality} but endpoint returned {actual_quality}"
+            )
+    return warnings
+
+
 def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
@@ -353,6 +372,9 @@ def main() -> int:
             timeout=args.timeout,
             overwrite=args.overwrite,
         )
+        warnings = parameter_warnings(args, response)
+        for warning in warnings:
+            print(f"tda-image-generation: warning: {warning}", file=sys.stderr)
         result = {
             "status": "completed",
             "saved_paths": [str(path) for path in saved],
@@ -360,6 +382,7 @@ def main() -> int:
             "background": response.get("background"),
             "quality": response.get("quality"),
             "size": response.get("size"),
+            "warnings": warnings,
         }
         print(json.dumps(result, ensure_ascii=False))
         return 0
